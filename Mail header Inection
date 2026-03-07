@@ -24,7 +24,14 @@
 # This shows that the app has blocked new line characters and header keywords 
 # lets try to decode the email and try inserting the email 
 
-
+# In medium level we are able to send the email by adding Test%0D%0ABcc: attacker@test.com in the remarks. Set the email to the valid email and we will see a message stating that the email has been sent. 
 ## `Remediation`
 # - prevents attackers from creating new header lines by remove CRLF characters (\r\n)
 - Reject the emails that contain spaces and nultiple email addresses
+
+# At High security level, the application usually adds stronger protections against Mail Header Injection. These protections typically include:
+
+- Email format validation
+- Filtering of \r and \n characters
+- Blocking encoded CRLF (%0D%0A)
+- Removing header keywords like bcc: or cc:
