@@ -1,1 +1,30 @@
+# **Mail Header Injection**
 
+# Mail Header Injection is a vulnerability where user input is inserted into email headers (like To, Subject, CC, BCC) without proper validation. 
+# Attackers inject newline characters to add new headers or even modify the message.
+
+
+## Step 1
+# Login to bWAPP and got Mail header injection and set the severity to  `low`
+# In the input fields add Name, email and subject. 
+# Once the details are added send the request to Burpsuite.
+# In Burpsuite add %0ABcc: attacker2@email.com to the email. 
+
+# **%0A** is a line feed which moves the text to next line. you can directly add &bcc: emailaddress
+
+# you will receive a response as the email has been sent. 
+
+# Now the attacker receives a copy of every email.
+
+
+## Step 2 
+# Set the severity to Medium 
+# Now try inserting BCC or CC email address as %0ABCC=attacker2@email.com
+# Refelects error message as `Enter a valid e-mail address!` 
+# This shows that the app has blocked new line characters and header keywords 
+# lets try to decode the email and try inserting the email 
+
+
+## `Remediation`
+# - prevents attackers from creating new header lines by remove CRLF characters (\r\n)
+- Reject the emails that contain spaces and nultiple email addresses
