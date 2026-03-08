@@ -1,1 +1,14 @@
+# **SQL injection**
+#  Attackers exploit this vulnerability to manipulate the SQL queries executed by the application's database, potentially gaining unauthorized access to data, modifying or deleting records, and even taking control of the entire database. 
 
+
+
+## Step 1
+# Set the severity to low 
+# upload any special character into the input field 
+# look out for any response from the server 
+# Response - Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '%'' at line 1
+# Now we can confirm that there is a possiblity of SQL inbjection 
+# lets try using some standard payloads avaible for SQL injection
+# payloads like - 'or1=1# 
+# This worked and it gives the movie information
