@@ -26,3 +26,7 @@ The most important remediation is not executing user input as code.
 Avoid PHP functions such as Dangerous PHP functions to avoid:eval()assert()system()exec()shell_exec()passthru()
 Allow only expected inputs 
 If user input is printed on the page, encode it by adding htmlspecialchars()
+
+
+
+Reference - https://jaiguptanick.github.io/Blog/blog/Walkthrough_of_bWAPP_solutions_A1_injection_writeups/
